@@ -1,0 +1,223 @@
+<div class="row justify-content-center fade-in">
+  <div class="col-md-8 col-lg-6">
+    <div class="card">
+      <div
+        class="card-header"
+        [ngClass]="{
+          'bg-primary': !route.snapshot.queryParams['id'],
+          'bg-warning': route.snapshot.queryParams['id'],
+        }"
+        [class.text-white]="!route.snapshot.queryParams['id']"
+      >
+        <h3 class="mb-0">
+          <i
+            [class.bi-person-plus-fill]="!route.snapshot.queryParams['id']"
+            [class.bi-pencil-square]="route.snapshot.queryParams['id']"
+            class="me-2"
+          ></i>
+          {{
+            route.snapshot.queryParams["id"]
+              ? "Editar Profissional"
+              : "Cadastro de Profissional"
+          }}
+        </h3>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="profissionalForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label">
+              <i class="bi bi-person-badge me-1"></i>
+              Nome Completo
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nome"
+              [class.is-invalid]="
+                profissionalForm.get('nome')?.invalid &&
+                profissionalForm.get('nome')?.touched
+              "
+              placeholder="Digite o nome completo"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                profissionalForm.get('nome')?.invalid &&
+                profissionalForm.get('nome')?.touched
+              "
+            >
+              <span *ngIf="profissionalForm.get('nome')?.errors?.['required']"
+                >Nome é obrigatório</span
+              >
+              <span *ngIf="profissionalForm.get('nome')?.errors?.['minlength']"
+                >Nome deve ter no mínimo 3 caracteres</span
+              >
+              <span *ngIf="profissionalForm.get('nome')?.errors?.['maxlength']"
+                >Nome deve ter no máximo 100 caracteres</span
+              >
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">
+              <i class="bi bi-card-text me-1"></i>
+              CRM/COREN
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="registro"
+              [class.is-invalid]="
+                profissionalForm.get('registro')?.invalid &&
+                profissionalForm.get('registro')?.touched
+              "
+              placeholder="Ex: CRM12345 ou COREN98765"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                profissionalForm.get('registro')?.invalid &&
+                profissionalForm.get('registro')?.touched
+              "
+            >
+              <span
+                *ngIf="profissionalForm.get('registro')?.errors?.['required']"
+                >CRM/COREN é obrigatório</span
+              >
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">
+              <i class="bi bi-tag me-1"></i>
+              Categoria
+            </label>
+            <select
+              class="form-select"
+              formControlName="categoria"
+              [class.is-invalid]="
+                profissionalForm.get('categoria')?.invalid &&
+                profissionalForm.get('categoria')?.touched
+              "
+            >
+              <option value="">Selecione a categoria</option>
+              <option *ngFor="let cat of categorias" [value]="cat">
+                {{ categoriaLabel[cat] }}
+              </option>
+            </select>
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                profissionalForm.get('categoria')?.invalid &&
+                profissionalForm.get('categoria')?.touched
+              "
+            >
+              Categoria é obrigatória
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="bi bi-clock me-1"></i>
+              Carga Horária Semanal (horas)
+            </label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cargaHorariaSemanal"
+              [class.is-invalid]="
+                profissionalForm.get('cargaHorariaSemanal')?.invalid &&
+                profissionalForm.get('cargaHorariaSemanal')?.touched
+              "
+              min="20"
+              max="40"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                profissionalForm.get('cargaHorariaSemanal')?.invalid &&
+                profissionalForm.get('cargaHorariaSemanal')?.touched
+              "
+            >
+              <span
+                *ngIf="
+                  profissionalForm.get('cargaHorariaSemanal')?.errors?.[
+                    'required'
+                  ]
+                "
+                >Carga horária é obrigatória</span
+              >
+              <span
+                *ngIf="
+                  profissionalForm.get('cargaHorariaSemanal')?.errors?.['min']
+                "
+                >Mínimo de 10 horas/semana</span
+              >
+              <span
+                *ngIf="
+                  profissionalForm.get('cargaHorariaSemanal')?.errors?.['max']
+                "
+                >Máximo de 40 horas/semana</span
+              >
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 mt-3">
+            <button
+              type="submit"
+              class="btn w-100"
+              [ngClass]="{
+                'btn-primary': !route.snapshot.queryParams['id'],
+                'btn-warning': route.snapshot.queryParams['id'],
+              }"
+              [disabled]="profissionalForm.invalid || loading"
+            >
+              <span *ngIf="!loading">
+                <i
+                  class="bi"
+                  [class.bi-save]="!route.snapshot.queryParams['id']"
+                  [class.bi-pencil-square]="route.snapshot.queryParams['id']"
+                  class="me-2"
+                ></i>
+                {{
+                  route.snapshot.queryParams["id"]
+                    ? "Atualizar Profissional"
+                    : "Cadastrar Profissional"
+                }}
+              </span>
+              <span *ngIf="loading">
+                <span
+                  class="spinner-border spinner-border-sm me-2"
+                  role="status"
+                ></span>
+                {{
+                  route.snapshot.queryParams["id"]
+                    ? "Atualizando..."
+                    : "Cadastrando..."
+                }}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="voltarParaLista()"
+            >
+              <i class="bi bi-arrow-left me-2"></i>
+              Cancelar
+            </button>
+          </div>
+        </form>
+
+        <div *ngIf="mensagemSucesso" class="alert alert-success mt-3 fade-in">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          {{ mensagemSucesso }}
+        </div>
+        <div *ngIf="mensagemErro" class="alert alert-danger mt-3 fade-in">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {{ mensagemErro }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

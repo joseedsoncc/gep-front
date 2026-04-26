@@ -15,7 +15,7 @@ export class NavbarComponent {
     //{ path: '/profissionais/cadastro', label: 'Novo Profissional', icon: 'bi-person-plus' },
     {
       path: '/profissionais/lista',
-      label: 'Lista de Profissionais',
+      label: 'Profissional',
       icon: 'bi-people',
     },
   ];
