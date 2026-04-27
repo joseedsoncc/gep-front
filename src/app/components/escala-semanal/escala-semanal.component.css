@@ -1,0 +1,102 @@
+.table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-warning {
+  background-color: #fff3cd !important;
+  transition: background-color 0.3s ease;
+}
+
+.badge {
+  cursor: default;
+  transition: transform 0.2s ease;
+}
+
+.badge:hover {
+  transform: scale(1.05);
+}
+
+.btn-outline-danger {
+  transition: all 0.2s ease;
+}
+
+.btn-outline-danger:hover {
+  transform: translateY(-2px);
+}
+
+/*
+.btn-excluir-plantao {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: red;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  padding: 0;
+}
+
+.btn-excluir-plantao:hover {
+  background: darkred;
+}
+
+.badge {
+  position: relative;
+  padding-right: 20px;
+}
+*/
+
+.btn-plantao {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  min-width: 80px;
+}
+
+.btn-plantao-manha {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-plantao-manha:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.btn-plantao-tarde {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-plantao-tarde:hover {
+  background-color: #1e7e34;
+  transform: translateY(-2px);
+}
+
+.btn-plantao-noite {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-plantao-noite:hover {
+  background-color: #bd2130;
+  transform: translateY(-2px);
+}
+
+.btn-plantao small {
+  font-size: 10px;
+  opacity: 0.9;
+}

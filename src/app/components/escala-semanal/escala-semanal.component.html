@@ -1,0 +1,223 @@
+<div class="fade-in">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-calendar-plus-fill me-2"></i>
+            Cadastrar Plantão
+          </h4>
+        </div>
+        <br />
+
+        <div class="card-body">
+          <form [formGroup]="escalaForm" (ngSubmit)="cadastrarPlantao()">
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-person-badge me-1"></i>
+                Profissional
+              </label>
+              <select class="form-select" formControlName="profissionalId">
+                <option value="">Selecione o profissional</option>
+                <option *ngFor="let prof of profissionais" [value]="prof.id">
+                  {{ prof.nome }} - {{ categoriaLabel[prof.categoria] }} ({{
+                    prof.cargaHorariaSemanal
+                  }}h)
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-calendar-date me-1"></i>
+                Data
+              </label>
+              <input type="date" class="form-control" formControlName="data" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-clock me-1"></i>
+                Turno
+              </label>
+              <select class="form-select" formControlName="turno">
+                <option value="">Selecione o turno</option>
+                <option *ngFor="let turno of turnos" [value]="turno">
+                  {{ turnoHorario[turno].label }} -
+                  {{ turnoHorario[turno].horario }} ({{
+                    turnoHorario[turno].horas
+                  }}h)
+                </option>
+              </select>
+            </div>
+            <br />
+
+            <button
+              type="submit"
+              class="btn btn-success w-100"
+              [disabled]="escalaForm.invalid || loading"
+            >
+              <span *ngIf="!loading">
+                <i class="bi bi-save me-2"></i>
+                Cadastrar Plantão
+              </span>
+              <span *ngIf="loading">
+                <span
+                  class="spinner-border spinner-border-sm me-2"
+                  role="status"
+                ></span>
+                Processando...
+              </span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <br />
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-calendar-week me-2"></i>
+            Navegação da Escala
+          </h4>
+        </div>
+        <br />
+
+        <div class="card-body">
+          <div class="btn-group w-100" role="group">
+            <button class="btn btn-outline-primary" (click)="semanaAnterior()">
+              <i class="bi bi-chevron-left"></i> Semana Anterior
+            </button>
+            <button class="btn btn-primary" (click)="semanaAtual()">
+              <i class="bi bi-calendar-week"></i> Semana Atual
+            </button>
+            <button class="btn btn-outline-primary" (click)="proximaSemana()">
+              Próxima Semana <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="mensagemSucesso" class="alert alert-success fade-in">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    {{ mensagemSucesso }}
+  </div>
+  <div *ngIf="mensagemErro" class="alert alert-danger fade-in">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    {{ mensagemErro }}
+  </div>
+  <br />
+
+  <div class="card" *ngIf="!loading && escalaSemanal">
+    <div class="card-header bg-dark text-white">
+      <h4 class="mb-0">
+        <i class="bi bi-table me-2"></i>
+        Escala Semanal: {{ escalaSemanal.inicioSemana | date: "dd/MM/yyyy" }} a
+        {{ escalaSemanal.fimSemana | date: "dd/MM/yyyy" }}
+      </h4>
+    </div>
+    <br />
+
+    <div class="card-body" style="overflow-x: auto">
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Profissional (Carga Horária)</th>
+            <th *ngFor="let dia of diasSemana">
+              {{ dia | date: "dd/MM" }} ({{ obterNomeDiaSemana(dia) }})
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let profissional of profissionais"
+            [class.table-warning]="profissionalAtingiuLimite(profissional.id!)"
+          >
+            <td style="min-width: 200px">
+              <strong>{{ profissional.nome }}</strong
+              ><br />
+              <small class="text-muted">
+                {{ categoriaLabel[profissional.categoria] }} -
+                {{ profissional.cargaHorariaSemanal }}h/sem
+              </small>
+              <div
+                *ngIf="profissionalAtingiuLimite(profissional.id!)"
+                class="text-warning mt-1"
+              >
+                <i class="bi bi-exclamation-triangle-fill"></i> Limite atingido!
+              </div>
+            </td>
+            <td *ngFor="let dia of diasSemana" class="text-center align-middle">
+              <ng-container
+                *ngIf="obterPlantoesNaCelula(profissional.id!, dia) as plantoes"
+              >
+                <div *ngFor="let plantao of plantoes" class="mb-1">
+                  <button
+                    class="btn-plantao"
+                    [ngClass]="{
+                      'btn-plantao-manha': plantao.turno === 'MANHA',
+                      'btn-plantao-tarde': plantao.turno === 'TARDE',
+                      'btn-plantao-noite': plantao.turno === 'NOITE',
+                    }"
+                    (click)="
+                      excluirPlantao(
+                        plantao.id,
+                        profissional.nome,
+                        plantao.turnoLabel,
+                        dia
+                      )
+                    "
+                    title="Excluir plantão"
+                  >
+                    {{ plantao.turnoLabel }}<br />
+                    <small>{{
+                      plantao.turno === "MANHA"
+                        ? "07:00-13:00"
+                        : plantao.turno === "TARDE"
+                          ? "13:00-19:00"
+                          : "19:00-07:00"
+                    }}</small>
+                  </button>
+                </div>
+              </ng-container>
+              <span
+                *ngIf="
+                  obterPlantoesNaCelula(profissional.id!, dia).length === 0
+                "
+                class="text-muted"
+              >
+                <i class="bi bi-dash-circle"></i><br />
+                -
+              </span>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot class="table-light">
+          <tr>
+            <td colspan="8" class="text-center">
+              <small>
+                <i class="bi bi-info-circle"></i>
+                Linhas com fundo amarelo indicam profissionais que atingiram o
+                limite de horas na semana
+              </small>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="spinner-container">
+    <div
+      class="spinner-border text-primary"
+      role="status"
+      style="width: 3rem; height: 3rem"
+    >
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+  </div>
+</div>

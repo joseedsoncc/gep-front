@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 })
 export class NavbarComponent {
   menuItems = [
-    //{ path: '/escala', label: 'Escala Semanal', icon: 'bi-calendar-week' },
+    { path: '/escala', label: 'Escala Semanal', icon: 'bi-calendar-week' },
     //{ path: '/profissionais/cadastro', label: 'Novo Profissional', icon: 'bi-person-plus' },
     {
       path: '/profissionais/lista',
