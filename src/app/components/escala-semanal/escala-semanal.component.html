@@ -1,82 +1,23 @@
 <div class="fade-in">
   <div class="row mb-4">
-    <div class="col-md-6">
+    <div class="col-md-12">
       <div class="card">
-        <div class="card-header bg-success text-white">
+        <div
+          class="card-header bg-success text-white d-flex justify-content-between align-items-center"
+        >
           <h4 class="mb-0">
-            <i class="bi bi-calendar-plus-fill me-2"></i>
-            Cadastrar Plantão
+            <i class="bi bi-calendar-week me-2"></i>
+            Escala Semanal de Plantões
           </h4>
+          <br />
+
+          <button class="btn btn-light" (click)="irParaCadastroPlantao()">
+            <i class="bi bi-calendar-plus-fill me-1"></i>
+            Cadastrar Plantão
+          </button>
         </div>
         <br />
 
-        <div class="card-body">
-          <form [formGroup]="escalaForm" (ngSubmit)="cadastrarPlantao()">
-            <div class="mb-3">
-              <label class="form-label">
-                <i class="bi bi-person-badge me-1"></i>
-                Profissional
-              </label>
-              <select class="form-select" formControlName="profissionalId">
-                <option value="">Selecione o profissional</option>
-                <option *ngFor="let prof of profissionais" [value]="prof.id">
-                  {{ prof.nome }} - {{ categoriaLabel[prof.categoria] }} ({{
-                    prof.cargaHorariaSemanal
-                  }}h)
-                </option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">
-                <i class="bi bi-calendar-date me-1"></i>
-                Data
-              </label>
-              <input type="date" class="form-control" formControlName="data" />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">
-                <i class="bi bi-clock me-1"></i>
-                Turno
-              </label>
-              <select class="form-select" formControlName="turno">
-                <option value="">Selecione o turno</option>
-                <option *ngFor="let turno of turnos" [value]="turno">
-                  {{ turnoHorario[turno].label }} -
-                  {{ turnoHorario[turno].horario }} ({{
-                    turnoHorario[turno].horas
-                  }}h)
-                </option>
-              </select>
-            </div>
-            <br />
-
-            <button
-              type="submit"
-              class="btn btn-success w-100"
-              [disabled]="escalaForm.invalid || loading"
-            >
-              <span *ngIf="!loading">
-                <i class="bi bi-save me-2"></i>
-                Cadastrar Plantão
-              </span>
-              <span *ngIf="loading">
-                <span
-                  class="spinner-border spinner-border-sm me-2"
-                  role="status"
-                ></span>
-                Processando...
-              </span>
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <br />
-
-    <div class="col-md-6">
-      <div class="card">
         <div class="card-header bg-info text-white">
           <h4 class="mb-0">
             <i class="bi bi-calendar-week me-2"></i>
@@ -84,7 +25,6 @@
           </h4>
         </div>
         <br />
-
         <div class="card-body">
           <div class="btn-group w-100" role="group">
             <button class="btn btn-outline-primary" (click)="semanaAnterior()">
@@ -164,7 +104,7 @@
                       'btn-plantao-noite': plantao.turno === 'NOITE',
                     }"
                     (click)="
-                      excluirPlantao(
+                      confirmarExclusaoPlantao(
                         plantao.id,
                         profissional.nome,
                         plantao.turnoLabel,
@@ -218,6 +158,53 @@
       style="width: 3rem; height: 3rem"
     >
       <span class="visually-hidden">Carregando...</span>
+    </div>
+  </div>
+
+  <div *ngIf="plantaoParaExcluir" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          Confirmar Exclusão
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="cancelarExclusaoPlantao()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Tem certeza que deseja excluir este plantão?</p>
+        <div class="alert alert-warning">
+          <strong>{{ plantaoParaExcluir.profissionalNome }}</strong
+          ><br />
+          <small>
+            Turno: {{ plantaoParaExcluir.turnoLabel }}<br />
+            Data: {{ plantaoParaExcluir.data | date: "dd/MM/yyyy" }}
+          </small>
+        </div>
+        <p class="text-danger mb-0">
+          <i class="bi bi-info-circle-fill"></i>
+          Esta ação não poderá ser desfeita!
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancelarExclusaoPlantao()"
+        >
+          <i class="bi bi-x-circle"></i> Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="executarExclusaoPlantao()"
+        >
+          <i class="bi bi-trash"></i> Sim, Excluir
+        </button>
+      </div>
     </div>
   </div>
 </div>

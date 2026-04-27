@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -36,11 +37,18 @@ export class EscalaSemanalComponent implements OnInit {
   mensagemSucesso = '';
   mensagemErro = '';
   dataReferencia: Date = new Date();
+  plantaoParaExcluir: {
+    id: number;
+    profissionalNome: string;
+    turnoLabel: string;
+    data: Date;
+  } | null = null;
 
   constructor(
     private fb: FormBuilder,
     private escalaService: EscalaService,
     private profissionalService: ProfissionalService,
+    private router: Router,
   ) {
     this.escalaForm = this.fb.group({
       profissionalId: ['', Validators.required],
@@ -61,7 +69,6 @@ export class EscalaSemanalComponent implements OnInit {
     });
   }
 
-  // Retorna a Segunda-feira de qualquer data
   obterSegundaFeira(data: Date): Date {
     const dia = data.getDay();
     const diff = dia === 0 ? -6 : 1 - dia;
@@ -94,7 +101,7 @@ export class EscalaSemanalComponent implements OnInit {
 
   carregarEscalaSemanal(data: Date): void {
     this.loading = true;
-    // Envia a Segunda-feira para o backend
+
     const segunda = this.obterSegundaFeira(data);
 
     this.escalaService.obterEscalaSemanal(segunda).subscribe({
@@ -126,14 +133,6 @@ export class EscalaSemanalComponent implements OnInit {
       this.diasSemana.push(dia);
     }
   }
-
-  /*obterTurnoNaCelula(profissionalId: number, data: Date): string {
-    if (!this.escalaSemanal?.escala) return '';
-    const escalaProfissional = this.escalaSemanal.escala[profissionalId];
-    if (!escalaProfissional) return '';
-    const dataStr = data.toISOString().split('T')[0];
-    return escalaProfissional[dataStr] || '';
-  }*/
 
   profissionalAtingiuLimite(profissionalId: number): boolean {
     return this.profissionaisComLimite.get(profissionalId) || false;
@@ -196,28 +195,43 @@ export class EscalaSemanalComponent implements OnInit {
     return escalaProfissional[dataStr] || [];
   }
 
-  excluirPlantao(
+  confirmarExclusaoPlantao(
     plantaoId: number,
     profissionalNome: string,
     turnoLabel: string,
     data: Date,
   ): void {
-    if (
-      confirm(
-        `Deseja excluir o plantão de ${turnoLabel} do profissional ${profissionalNome} na data ${data.toLocaleDateString()}?`,
-      )
-    ) {
-      this.escalaService.excluirPlantao(plantaoId).subscribe({
+    this.plantaoParaExcluir = {
+      id: plantaoId,
+      profissionalNome: profissionalNome,
+      turnoLabel: turnoLabel,
+      data: data,
+    };
+  }
+
+  executarExclusaoPlantao(): void {
+    if (this.plantaoParaExcluir) {
+      this.escalaService.excluirPlantao(this.plantaoParaExcluir.id).subscribe({
         next: () => {
-          this.mensagemSucesso = 'Plantão excluído com sucesso!';
+          this.mensagemSucesso = '✅ Plantão excluído com sucesso!';
+          this.plantaoParaExcluir = null;
           this.carregarEscalaSemanal(this.dataReferencia);
           setTimeout(() => (this.mensagemSucesso = ''), 3000);
         },
         error: (err) => {
-          this.mensagemErro = err.error?.error || 'Erro ao excluir plantão';
+          this.mensagemErro = err.error?.error || '❌ Erro ao excluir plantão';
+          this.plantaoParaExcluir = null;
           setTimeout(() => (this.mensagemErro = ''), 3000);
         },
       });
     }
+  }
+
+  irParaCadastroPlantao(): void {
+    this.router.navigate(['/escala/cadastro']);
+  }
+
+  cancelarExclusaoPlantao(): void {
+    this.plantaoParaExcluir = null;
   }
 }

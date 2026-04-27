@@ -96,12 +96,10 @@ export class ListaProfissionaisComponent implements OnInit {
     this.exibirLista = false;
   }
 
-  //----
   irParaCadastro(): void {
     this.router.navigate(['/profissionais/cadastro']);
   }
 
-  //editar
   editarProfissional(id: number): void {
     this.router.navigate(['/profissionais/cadastro'], {
       queryParams: { id: id },
