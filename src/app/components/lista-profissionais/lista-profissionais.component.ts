@@ -116,7 +116,6 @@ export class ListaProfissionaisComponent implements OnInit {
     };
   }
 
-  //excluir
   excluirProfissional(): void {
     if (this.profissionalParaExcluir) {
       this.loading = true;

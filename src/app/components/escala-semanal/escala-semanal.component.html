@@ -176,6 +176,8 @@
       </div>
       <div class="modal-body">
         <p>Tem certeza que deseja excluir este plantão?</p>
+        <p>Esta ação não poderá ser desfeita!</p>
+        <br />
         <div class="alert alert-warning">
           <strong>{{ plantaoParaExcluir.profissionalNome }}</strong
           ><br />
@@ -184,10 +186,6 @@
             Data: {{ plantaoParaExcluir.data | date: "dd/MM/yyyy" }}
           </small>
         </div>
-        <p class="text-danger mb-0">
-          <i class="bi bi-info-circle-fill"></i>
-          Esta ação não poderá ser desfeita!
-        </p>
       </div>
       <div class="modal-footer">
         <button
@@ -202,7 +200,7 @@
           class="btn btn-danger"
           (click)="executarExclusaoPlantao()"
         >
-          <i class="bi bi-trash"></i> Sim, Excluir
+          <i class="bi bi-trash"></i> Confirmar
         </button>
       </div>
     </div>

@@ -157,13 +157,10 @@
     </div>
     <div class="modal-body">
       <p>Tem certeza que deseja excluir o profissional abaixo?</p>
+      <p>Esta ação não poderá ser desfeita!</p>
       <div class="alert alert-warning">
         <strong>{{ profissionalParaExcluir.nome }}</strong>
       </div>
-      <p class="text-danger mb-0">
-        <i class="bi bi-info-circle-fill"></i>
-        Esta ação não poderá ser desfeita!
-      </p>
     </div>
     <div class="modal-footer">
       <button
@@ -178,7 +175,7 @@
         class="btn btn-danger"
         (click)="excluirProfissional()"
       >
-        <i class="bi bi-trash"></i> Sim
+        <i class="bi bi-trash"></i> Confirmar
       </button>
     </div>
   </div>

@@ -213,13 +213,13 @@ export class EscalaSemanalComponent implements OnInit {
     if (this.plantaoParaExcluir) {
       this.escalaService.excluirPlantao(this.plantaoParaExcluir.id).subscribe({
         next: () => {
-          this.mensagemSucesso = '✅ Plantão excluído com sucesso!';
+          this.mensagemSucesso = 'Plantão excluído com sucesso!';
           this.plantaoParaExcluir = null;
           this.carregarEscalaSemanal(this.dataReferencia);
           setTimeout(() => (this.mensagemSucesso = ''), 3000);
         },
         error: (err) => {
-          this.mensagemErro = err.error?.error || '❌ Erro ao excluir plantão';
+          this.mensagemErro = err.error?.error || 'Erro ao excluir plantão';
           this.plantaoParaExcluir = null;
           setTimeout(() => (this.mensagemErro = ''), 3000);
         },
